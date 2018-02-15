@@ -1,159 +1,3 @@
-class Player {
-	constructor(gridSize) {
-		// stores col = row of the game board
-		this.gridSize = gridSize;
-		// store 2D for holding player's moves
-		this.shipLoc = [];
-		// 2D array storing opponent's moves
-		this.oppView = [];
-		// list holding ships location;
-		this.shipList = [];
-		// list holding ships location;
-		this.oppShipList = [];
-		// shots took
-		this.shotTook = 0;
-		// ships sunk
-		this.sunkShips = 0;
-		for (var i=0;i<gridSize;i++) {
-			 this.oppView[i] = new Array(gridSize).fill("_");
-			 this.shipLoc[i] = new Array(gridSize).fill("_");
-		}
-	}
-
-	countSunkShips() {
-		var sunkShipCount = 0;
-		for(var index in this.oppShipList) {
-			if(this.isBoatAtIndexSunk(index))
-				sunkShipCount ++;					
-		}
-		return sunkShipCount;
-	}
-
-	placeShip(location){
-		this.shipList.push(location);
-		for(var index in location) {
-			//console.log(location[index]);
-			var cor = location[index];
-			var x = cor.x;
-			var y = cor.y;
-			this.updateShipLoc(x, y);
-		}
-		//console.log(this.shipLoc);
-	}
-
-	getBoatIndexWithCor(x,y) {
-		var list = this.oppShipList;
-		for(var index in list) {
-			var ship = list[index];
-			//console.log("ship is: ");
-			//console.log(ship);
-			for(var i in ship) {
-				var cor = ship[i];
-				if(cor.x == x && cor.y == y)
-					return index;
-			}
-		}
-	}
-
-	getBoatLocationWithIndex(index) {
-		var ship = this.oppShipList[index];
-		return ship;
-	}
-
-	isBoatAtIndexSunk(index) {
-		//console.log("index: " + index);
-		//console.log("oppShipList: ");
-		//console.log(this.oppShipList);
-		var ship = this.oppShipList[index];
-		console.log(ship);
-		for(var individualCor in ship) {
-			var cor = ship[individualCor];
-			var x = cor.x;
-			var y = cor.y;
-			if(this.oppView[x][y] == "S") {
-				console.log("ship still alive");
-				return false;
-			}
-		}
-		console.log("ship at " + index + " sunk");
-		return true;
-	}
-	oppShipsAllSunk() {
-		for(var index in this.oppShipList) {
-			if(!this.isBoatAtIndexSunk(index))
-				return false;					
-		}
-		return true;
-	}
-	oppShipsAllSunkOld() {
-		//console.log("oppShipList: ");
-		//console.log(this.oppShipList);
-		// read through list of ships coordinates
-		// and checks each coordinate to see the state of cell
-		for(var index in this.oppShipList) {
-			var ship = this.oppShipList[index];
-			//console.log("ship: " + index);
-			//console.log(ship);
-			for(var individualCor in ship) {
-				var cor = ship[individualCor];
-				var x = cor.x;
-				var y = cor.y;
-				//console.log(cor);
-				//console.log(this.oppView[x][y]);
-				if(this.oppView[x][y] == "S") {
-					// as soon as a cell is "S" as in ship means game is not over
-					return false;
-				}
-			}
-			//console.log("ship: " + index + " sunk");
-			// at this point, ship at index has sunk, update color
-			var tag = "[cor-x=" + x + "][cor-y="+y + "]";
-			console.log($(tag));;
-			
-		}
-		//console.log("All ships sunk!");
-		// if reached this point, means all ships sunk
-		return true;
-	}
-
-	updateShipLoc(x, y) {
-		this.shipLoc[x][y] = "S";
-	}
-
-	updateOppView(x, y, state) {
-		this.shotTook += 1;
-		this.oppView[x][y] = state;
-		//console.log(this.oppView);
-	}
-
-	updateOppShipList(list) {
-		this.oppShipList = list;
-	}
-
-	storeOppLoc(oppGrid) {
-		this.oppView = oppGrid;
-	}
-	getShotAttempted() {
-		return this.shotTook;
-	}
-	getStateAtCor(x,y) {
-		return this.oppView[x][y];
-	}
-	getOppViewGrid() {
-		return this.oppView;
-	}
-	getSelfGrid() {
-		return this.shipLoc;
-	}
-	getShipList() {
-		return this.shipList;
-	}
-	printGrid() {
-		console.log(this.shipLoc);
-		console.log(this.oppView);
-	}
-}
-
 function showSunkShip(x,y, playerTag) {
 	if(playerTag == ".p1-opp-view")
 		var player = p1;
@@ -161,29 +5,18 @@ function showSunkShip(x,y, playerTag) {
 		var player = p2;
 	// get the location of ship with the coordinate
 	var shipIndex = player.getBoatIndexWithCor(x,y);
-	console.log(shipIndex);
 	var shipSunk = player.isBoatAtIndexSunk(shipIndex);
 	if(shipSunk) {
-		console.log("Sunk " + shipIndex + " ship!!!!");
 		// get the location on the ship that sunk
 		var shipLocation = player.getBoatLocationWithIndex(shipIndex);
-		console.log("a");
-		console.log(shipLocation);
 		// update each coordinates class tag to display accordingly
 		for(var index in shipLocation) {
-		console.log("b");
 			var cor = shipLocation[index];
-		console.log("c: ");
-		console.log(cor);
 			var xcor = cor.x;
-		console.log("e: " + xcor);
 			var ycor = cor.y;
-		console.log("f: " + ycor);
 			
 			var tag = "[cor-x=" + xcor + "][cor-y=" + ycor + "]";
-		console.log("g: " + tag);
 			$(playerTag).find(tag).removeClass("hit");
-		console.log("h");
 			$(playerTag).find(tag).addClass("sink");
 		}
 	}
@@ -199,82 +32,55 @@ function generateScoreTally() {
 }
 
 function shotShip(cell, playerSide) {
-	//console.log(playerSide);
 	// only can shot if fired class tag is not there
 	if(!$(".menupane").hasClass("fired")) {
 		// get info of the cell that triggered the callback
 		var x = cell.getAttribute("cor-x");
 		var y = cell.getAttribute("cor-y");
 		var classList = cell.getAttribute("class");
-		//console.log("x: " + x + " y: " + y + " classList: " + classList);
-		//console.log(cell);
-		
-		//var tag = "." + classList + "";
-		//tag = tag.replace(/ /g, ".");
 		// create tag for searching customized tag
 		var tag = "[cor-x=" + x + "][cor-y="+y + "]";
-		//tag = tag.replace(/ /g, ".");
-		
-		// update cell according who's cell fired the callback
-		if(classList.includes("p1-opp-view")) {
-			// if the cell is miss or a hit end callback and 
-			// does not mark fired for the round
-			if(p1.getStateAtCor(x,y) == "H" || p1.getStateAtCor(x,y) == "X")
-				return;
-			// reads the list of classes of the cell
-			// if the cell has ship then it means a hit
-			if(classList.includes("ship")) {
-				// update opponent's view grid as hit
-				p1.updateOppView(x,y, "H");
-				$(".p1-opp-view").find(tag).addClass("hit");
-				alert("hit!");
-				// check if ship with coordinate is sunk
-				// if so get the boats coordinates and expose boat by changing class tag from hit to sink
-				showSunkShip(x,y, ".p1-opp-view");
-				// check if all ship has sunk and end game if so
-				if(p1.oppShipsAllSunk()) {
-					//alert("Player 1 win! \r\nTook " + p1.getShotAttempted() + " shots.");
-					var popUp = function () {
-						var scoreTally = generateScoreTally();
-						if (confirm("Player 1 Won!\r\n" + scoreTally + "Restarting game by clicking Ok\r\n")) {
-							resetGame();
-						}
-					};
-					popUp();
-				}
-			}
-			// else it's missed shot
-			else {
-				p1.updateOppView(x,y, "X");
-				$(".p1-opp-view").find(tag).removeClass("hide");
-				alert("missed!");
-			}
+		var pTag = "." + playerSide;
+		if(playerSide == "p1-opp-view") {
+			var player = p1
 		}
-		else if(classList.includes("p2-opp-view")) {
-			if(p2.getStateAtCor(x,y) == "H" || p2.getStateAtCor(x,y) == "X")
-				return;
-			if(classList.includes("ship")) {
-				p2.updateOppView(x,y, "H");
-				$(".p2-opp-view").find(tag).addClass("hit");
-				alert("hit!");
-				showSunkShip(x,y, ".p2-opp-view");
-				if(p2.oppShipsAllSunk()) {
-					//alert("Player 1 win! \r\nTook " + p1.getShotAttempted() + " shots.");
+		else {
+			var player = p2;
+		}
+
+		// if the cell is miss or a hit end callback and 
+		// does not mark fired for the round
+		if(player.getStateAtCor(x,y) == "H" || player.getStateAtCor(x,y) == "X")
+			return;
+		// reads the list of classes of the cell
+		// if the cell has ship then it means a hit
+		if(classList.includes("ship")) {
+			// update opponent's view grid as hit
+			player.updateOppView(x,y, "H");
+			$(pTag).find(tag).addClass("hit");
+			alert("hit!");
+			// check if ship with coordinate is sunk
+			// if so get the boats coordinates and expose boat by changing class tag from hit to sink
+			showSunkShip(x,y, "." + playerSide);
+			// check if all ship has sunk and end game if so
+			if(player.oppShipsAllSunk()) {
+				//alert("Player 1 win! \r\nTook " + p1.getShotAttempted() + " shots.");
+				var popUp = function () {
 					var scoreTally = generateScoreTally();
-					var popUp = function () {
-						if (confirm("Player 2 Won!\r\n" + scoreTally + "Restarting game by clicking Ok\r\n")) {
-							resetGame();
-						}
-					};
-					popUp();
-				}
-			}
-			else {
-				p2.updateOppView(x,y, "X");
-				$(".p2-opp-view").find(tag).removeClass("hide");
-				alert("missed!");
+					if (confirm("Player 1 Won!\r\n" + scoreTally + "Restarting game by clicking Ok\r\n")) {
+						resetGame();
+					}
+				};
+				popUp();
 			}
 		}
+		// else it's missed shot
+		else {
+			player.updateOppView(x,y, "X");
+			$(pTag).find(tag).removeClass("hide");
+			alert("missed!");
+		}
+		
 		// fired class tag to indicate a shot has been fired in this round
 		// and a switch side is needed to reset the fired state
 		$(".menupane").addClass("fired");
@@ -315,8 +121,6 @@ function generateShip(size, shipType) {
 		location = [{x:x, y:y}, {x:x+1, y:y}, {x:x, y:y+1}, {x:x+1, y:y+1}];
 	}
 
-	//console.log("ship-" + shipType);
-	//console.log(location);
 	return location;
 }
 
