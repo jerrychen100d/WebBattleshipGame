@@ -65,6 +65,11 @@
 				}
 			}
 			
+			getBoatLocationWithIndex(index) {
+				var ship = this.oppShipList[index];
+				return ship;
+			}
+			
 			isBoatAtIndexSunk(index) {
 				//console.log("index: " + index);
 				//console.log("oppShipList: ");
@@ -159,17 +164,38 @@
 			}
 		}
 		
-		function showSunkShip(x,y, player) {
-			if(player == ".p1-opp-view")
-				player = p1;
+		function showSunkShip(x,y, playerTag) {
+			if(playerTag == ".p1-opp-view")
+				var player = p1;
 			else
-				player = p2;
+				var player = p2;
 			// get the location of ship with the coordinate
 			var shipIndex = player.getBoatIndexWithCor(x,y);
 			console.log(shipIndex);
 			var shipSunk = player.isBoatAtIndexSunk(shipIndex);
 			if(shipSunk) {
-				console.log("Ship at " + shipIndex + " sunk");
+				console.log("Sunk " + shipIndex + " ship!!!!");
+				// get the location on the ship that sunk
+				var shipLocation = player.getBoatLocationWithIndex(shipIndex);
+				console.log("a");
+				console.log(shipLocation);
+				// update each coordinates class tag to display accordingly
+				for(var index in shipLocation) {
+				console.log("b");
+					var cor = shipLocation[index];
+				console.log("c: ");
+				console.log(cor);
+					var xcor = cor.x;
+				console.log("e: " + xcor);
+					var ycor = cor.y;
+				console.log("f: " + ycor);
+					
+					var tag = "[cor-x=" + xcor + "][cor-y=" + ycor + "]";
+				console.log("g: " + tag);
+					$(playerTag).find(tag).removeClass("hit");
+				console.log("h");
+					$(playerTag).find(tag).addClass("sink");
+				}
 			}
 		}
 		
