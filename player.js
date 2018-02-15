@@ -61,21 +61,15 @@ class Player {
 	}
 
 	isBoatAtIndexSunk(index) {
-		//console.log("index: " + index);
-		//console.log("oppShipList: ");
-		//console.log(this.oppShipList);
 		var ship = this.oppShipList[index];
-		console.log(ship);
 		for(var individualCor in ship) {
 			var cor = ship[individualCor];
 			var x = cor.x;
 			var y = cor.y;
 			if(this.oppView[x][y] == "S") {
-				console.log("ship still alive");
 				return false;
 			}
 		}
-		console.log("ship at " + index + " sunk");
 		return true;
 	}
 	oppShipsAllSunk() {
@@ -86,32 +80,22 @@ class Player {
 		return true;
 	}
 	oppShipsAllSunkOld() {
-		//console.log("oppShipList: ");
-		//console.log(this.oppShipList);
 		// read through list of ships coordinates
 		// and checks each coordinate to see the state of cell
 		for(var index in this.oppShipList) {
 			var ship = this.oppShipList[index];
-			//console.log("ship: " + index);
-			//console.log(ship);
 			for(var individualCor in ship) {
 				var cor = ship[individualCor];
 				var x = cor.x;
 				var y = cor.y;
-				//console.log(cor);
-				//console.log(this.oppView[x][y]);
 				if(this.oppView[x][y] == "S") {
 					// as soon as a cell is "S" as in ship means game is not over
 					return false;
 				}
 			}
-			//console.log("ship: " + index + " sunk");
 			// at this point, ship at index has sunk, update color
-			var tag = "[cor-x=" + x + "][cor-y="+y + "]";
-			console.log($(tag));;
-			
+			var tag = "[cor-x=" + x + "][cor-y="+y + "]";			
 		}
-		//console.log("All ships sunk!");
 		// if reached this point, means all ships sunk
 		return true;
 	}
@@ -123,7 +107,6 @@ class Player {
 	updateOppView(x, y, state) {
 		this.shotTook += 1;
 		this.oppView[x][y] = state;
-		//console.log(this.oppView);
 	}
 
 	updateOppShipList(list) {

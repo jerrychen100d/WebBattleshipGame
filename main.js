@@ -157,7 +157,6 @@ function createAllShips(player) {
 	} 
 	while (!canPutShip(ship, playerGrid));
 	player.placeShip(ship);
-	console.log(player.getShipList());
 }
 
 function canPutShip(locationArray, playerGrid) {
@@ -167,7 +166,6 @@ function canPutShip(locationArray, playerGrid) {
 		var x = cor.x;
 		var y = cor.y;
 		if(playerGrid[x][y] == "S") {
-			console.log("cor x: " + x + " cor y: " + y + " taken");
 			return false;
 		}
 	}
