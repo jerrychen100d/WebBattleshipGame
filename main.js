@@ -31,7 +31,7 @@ function generateScoreTally() {
 	return scoreTally;
 }
 
-function shotShip(cell, playerSide) {
+function shootShip(cell, playerSide) {
 	// only can shot if fired class tag is not there
 	if(!$(".menupane").hasClass("fired")) {
 		// get info of the cell that triggered the callback
@@ -249,7 +249,7 @@ function generateTable(array, tableTag) {
 			}
 			// if table was opp-view then attach call back when a cell is clicked
 			if(tableTag == "p1-opp-view" || tableTag == "p2-opp-view") {
-				var callBack = 'shotShip(this,"' + tableTag + '")';
+				var callBack = 'shootShip(this,"' + tableTag + '")';
 				table += "<td class='" + classString + " hide 'onclick='" + callBack + "' cor-x='" + row +"' cor-y='" + col + "'";
 			}
 			else {
