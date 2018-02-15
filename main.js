@@ -41,11 +41,12 @@ function shootShip(cell, playerSide) {
 		// create tag for searching customized tag
 		var tag = "[cor-x=" + x + "][cor-y="+y + "]";
 		var pTag = "." + playerSide;
+		var player;
 		if(playerSide == "p1-opp-view") {
-			var player = p1
+			player = p1
 		}
 		else {
-			var player = p2;
+			player = p2;
 		}
 
 		// if the cell is miss or a hit end callback and 
@@ -84,6 +85,10 @@ function shootShip(cell, playerSide) {
 		// fired class tag to indicate a shot has been fired in this round
 		// and a switch side is needed to reset the fired state
 		$(".menupane").addClass("fired");
+		// save game state to sessionStorage
+		saveIntoSessionWithKey("player1", p1);
+		saveIntoSessionWithKey("player2", p2);
+		saveIntoSessionWithKey("turn-end-by", playerSide);
 	}
 }
 
@@ -172,8 +177,24 @@ function canPutShip(locationArray, playerGrid) {
 	return true;
 }
 
+function readFromSessionWithKey(key) {
+	return JSON.parse(sessionStorage.getItem(key));
+}
+
+function saveIntoSessionWithKey(key, value) {
+	if(typeof(value) === "object")
+		sessionStorage.setItem(key, JSON.stringify(value));
+	else
+		sessionStorage.setItem(key, value);
+}
+
+function clearSessionCacheKey(key) {
+	sessionStorage.removeItem(key);
+}
+
 var p1; 
 var p2;
+
 function startGame() {
 	// start the game is the game-start class tag isn't found
 	// that way you can not spam starting a game 
@@ -262,3 +283,4 @@ function generateTable(array, tableTag) {
 	table += "</table>";
 	return table;
 }
+
