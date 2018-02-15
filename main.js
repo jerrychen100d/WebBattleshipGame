@@ -178,6 +178,8 @@ function canPutShip(locationArray, playerGrid) {
 }
 
 function readFromSessionWithKey(key) {
+	if(key == "turn-end-by")
+		return sessionStorage.getItem(key);
 	return JSON.parse(sessionStorage.getItem(key));
 }
 
@@ -194,15 +196,15 @@ function clearSessionCacheKey(key) {
 
 var p1; 
 var p2;
+var rowSize = 8;
+// initialize player with grid size
+p1 = new Player(rowSize);
+p2 = new Player(rowSize);
 
 function startGame() {
 	// start the game is the game-start class tag isn't found
 	// that way you can not spam starting a game 
-	if(!$(".menupane").hasClass("game-start")) {;
-		var rowSize = 8;
-		// initialize player with grid size
-		p1 = new Player(rowSize);
-		p2 = new Player(rowSize);
+	if(!$(".menupane").hasClass("game-start")) {
 		
 		// create and place 4 ships into each player's grid
 		createAllShips(p1);
@@ -215,6 +217,7 @@ function startGame() {
 		p2.updateOppShipList(p1.getShipList());
 		p1.updateOppShipList(p2.getShipList());
 		$(".player1side").css("display", "inline");
+		//console.log(p1);
 		drawGrid();
 	}
 }
@@ -244,7 +247,7 @@ function resetGame() {
 	location.reload();
 }
 
-function drawGrid(row) {
+function drawGrid() {
 	// if the game has not begin, identify by the game-start class name
 	// then generate tables according to players' stat and draw them
 	if(!$(".menupane").hasClass("game-start")) {
@@ -284,3 +287,31 @@ function generateTable(array, tableTag) {
 	return table;
 }
 
+// once page is ready, restore game stat by reading from session storeOppLoc
+// load player 1 and player and display side accordingly
+$(function() {
+    // read player 1 and 2's instance from sessionStorage
+		p1stat = readFromSessionWithKey("player1");
+    p2stat = readFromSessionWithKey("player2");
+		
+		// read who end the last turn-end-by
+		var lastPlayer = readFromSessionWithKey("turn-end-by");
+	
+		// only restore the game is both players stat are located
+		if(p1stat != null && p2stat != null) {
+			p1.restoreFromJson(p1stat);
+			p2.restoreFromJson(p2stat);
+			
+			if(lastPlayer == "p1-opp-view") {
+				$(".player1side").css("display", "none");
+				$(".player2side").css("display", "block");
+			}
+			else {
+				$(".player2side").css("display", "none");
+				$(".player1side").css("display", "block");
+			}
+			drawGrid();
+			// add class tag to show game already start so Start button will not be actionable
+			$(".menupane").addClass("game-start");
+		}
+});

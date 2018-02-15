@@ -20,6 +20,12 @@ class Player {
 		}
 	}
 	
+	restoreFromJson(obj) {
+		for(var key in obj) {
+			this[key] = obj[key];
+		}
+	}
+	
 	// count the number of sunken ship according to the shipList
 	countSunkShips() {
 		var sunkShipCount = 0;
