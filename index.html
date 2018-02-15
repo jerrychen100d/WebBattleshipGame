@@ -20,10 +20,23 @@
 				this.shipList = [];
 				// list holding ships location;
 				this.oppShipList = [];
+				// shots took
+				this.shotTook = 0;
+				// ships sunk
+				this.sunkShips = 0;
 				for (var i=0;i<gridSize;i++) {
 					 this.oppView[i] = new Array(gridSize).fill("_");
 					 this.shipLoc[i] = new Array(gridSize).fill("_");
 				}
+			}
+			
+			countSunkShips() {
+				var sunkShipCount = 0;
+				for(var index in this.oppShipList) {
+					if(this.isBoatAtIndexSunk(index))
+						sunkShipCount ++;					
+				}
+				return sunkShipCount;
 			}
 			
 			placeShip(location){
@@ -38,16 +51,46 @@
 				//console.log(this.shipLoc);
 			}
 			
-			getBoatWithCor(x,y) {
+			getBoatIndexWithCor(x,y) {
 			  var list = this.oppShipList;
 				for(var index in list) {
 					var ship = list[index];
-					if(ship.x == x && ship.y == y)
-						return ship;
+					//console.log("ship is: ");
+					//console.log(ship);
+					for(var i in ship) {
+						var cor = ship[i];
+						if(cor.x == x && cor.y == y)
+							return index;
+					}
 				}
 			}
 			
+			isBoatAtIndexSunk(index) {
+				//console.log("index: " + index);
+				//console.log("oppShipList: ");
+				//console.log(this.oppShipList);
+				var ship = this.oppShipList[index];
+				console.log(ship);
+				for(var individualCor in ship) {
+					var cor = ship[individualCor];
+					var x = cor.x;
+					var y = cor.y;
+					if(this.oppView[x][y] == "S") {
+						console.log("ship still alive");
+						return false;
+					}
+				}
+				console.log("ship at " + index + " sunk");
+				return true;
+			}
 			oppShipsAllSunk() {
+				for(var index in this.oppShipList) {
+					if(!this.isBoatAtIndexSunk(index))
+						return false;					
+				}
+				return true;
+			}
+			oppShipsAllSunkOld() {
 				//console.log("oppShipList: ");
 				//console.log(this.oppShipList);
 				// read through list of ships coordinates
@@ -83,6 +126,7 @@
 			}
 			
 			updateOppView(x, y, state) {
+				this.shotTook += 1;
 				this.oppView[x][y] = state;
 				//console.log(this.oppView);
 			}
@@ -94,7 +138,9 @@
 			storeOppLoc(oppGrid) {
 				this.oppView = oppGrid;
 			}
-			
+			getShotAttempted() {
+				return this.shotTook;
+			}
 			getStateAtCor(x,y) {
 				return this.oppView[x][y];
 			}
@@ -114,9 +160,26 @@
 		}
 		
 		function showSunkShip(x,y, player) {
+			if(player == ".p1-opp-view")
+				player = p1;
+			else
+				player = p2;
 			// get the location of ship with the coordinate
-			var ship = player.getBoatWithCor(x,y);
-			// 
+			var shipIndex = player.getBoatIndexWithCor(x,y);
+			console.log(shipIndex);
+			var shipSunk = player.isBoatAtIndexSunk(shipIndex);
+			if(shipSunk) {
+				console.log("Ship at " + shipIndex + " sunk");
+			}
+		}
+		
+		function generateScoreTally() {
+			var scoreTally = "Player 1 Sunk: " + p1.countSunkShips() + " ships\r";
+			scoreTally += "Player 2 Sunk: " + p2.countSunkShips() + " ships\r\n";
+			scoreTally += "Player 1 took " + p1.getShotAttempted() + " shots\r";
+			scoreTally += "Player 2 took " + p2.getShotAttempted() + " shots\r\n";
+			scoreTally += "Total shots: " + (p1.getShotAttempted() + p2.getShotAttempted()) + "\r\n";
+			return scoreTally;
 		}
 		
 		function shotShip(cell, playerSide) {
@@ -135,7 +198,6 @@
 				// create tag for searching customized tag
 				var tag = "[cor-x=" + x + "][cor-y="+y + "]";
 				//tag = tag.replace(/ /g, ".");
-				var wholeTable = $();
 				
 				// update cell according who's cell fired the callback
 				if(classList.includes("p1-opp-view")) {
@@ -150,11 +212,18 @@
 						p1.updateOppView(x,y, "H");
 						$(".p1-opp-view").find(tag).addClass("hit");
 						// check if ship with coordinate is sunk
-						// if so expose boat
-						showSunkShip(x,y, p1);
+						// if so get the boats coordinates and expose boat by changing class tag from hit to sink
+						showSunkShip(x,y, ".p1-opp-view");
 						// check if all ship has sunk and end game if so
 						if(p1.oppShipsAllSunk()) {
-							alert("Player 1 win!");
+							//alert("Player 1 win! \r\nTook " + p1.getShotAttempted() + " shots.");
+							var popUp = function () {
+								var scoreTally = generateScoreTally();
+								if (confirm("Player 1 Won!\r\n" + scoreTally + "Restarting game by clicking Ok\r\n")) {
+									resetGame();
+								}
+							};
+							popUp();
 						}
 					}
 					// else it's missed shot
@@ -169,8 +238,17 @@
 					if(classList.includes("ship")) {
 						p2.updateOppView(x,y, "H");
 						$(".p2-opp-view").find(tag).addClass("hit");
-						if(p2.oppShipsAllSunk())
-							alert("Player 2 win!");
+						showSunkShip(x,y, ".p2-opp-view");
+						if(p2.oppShipsAllSunk()) {
+							//alert("Player 1 win! \r\nTook " + p1.getShotAttempted() + " shots.");
+							var scoreTally = generateScoreTally();
+							var popUp = function () {
+								if (confirm("Player 2 Won!\r\n" + scoreTally + "Restarting game by clicking Ok\r\n")) {
+									resetGame();
+								}
+							};
+							popUp();
+						}
 					}
 					else {
 						p2.updateOppView(x,y, "X");
@@ -179,7 +257,7 @@
 				}
 				// fired class tag to indicate a shot has been fired in this round
 				// and a switch side is needed to reset the fired state
-				$(".menupane").addClass("fired");
+				//$(".menupane").addClass("fired");
 			}
 		}
 		
