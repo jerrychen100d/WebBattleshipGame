@@ -273,7 +273,7 @@ if(!$(".menupane").hasClass("fired")) {
 	}
 	// fired class tag to indicate a shot has been fired in this round
 	// and a switch side is needed to reset the fired state
-	//$(".menupane").addClass("fired");
+	$(".menupane").addClass("fired");
 }
 }
 
