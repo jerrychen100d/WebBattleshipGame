@@ -1,0 +1,71 @@
+body, html {
+	width: 100%;
+	height: 100%;
+	margin: 0;
+}
+
+.container {
+	width: 100%;
+	height: 100%;
+}
+
+.menupane {
+		width: 20%;
+		height: 100%;
+		float: left;
+		background-color: rosybrown;
+		border-collapse: collapse;
+}
+
+.player1side {
+		width: 40%;
+		height: 100%;
+		float: left;
+		#background-color: #fefbd8;
+		border-collapse: collapse;
+		display: none;
+}
+
+.player2side {
+	width: 40%;
+	height: 100%;
+	position: relative;
+	float: right;
+	#background-color: #d5f4e6;
+	border-collapse: collapse;
+	display: none;
+}
+
+.toppane {
+	height: 10%;
+}
+
+button {
+	margin: 10px;
+}
+
+table td{
+	table-layout: fixed;
+	width: 20px;
+	height: 20px;
+}
+
+.ship.hit {
+	background-color: yellow;
+}
+
+.ship.sink {
+	background-color: red;
+}
+
+.ship {
+	background-color: #80ced6;
+}
+
+td.miss {
+	background-color: white;
+}
+
+.hide {
+	background-color: #80ced6;
+}
