@@ -34,7 +34,7 @@ function generateScoreTally() {
 
 function shootShip(cell, playerSide) {
 	// only can shot if fired class tag is not there
-	if(!$(".menupane").hasClass("fired")) {
+	if(!$(".menupane").hasClass("fired") && !$(".menupane").hasClass("gameover")) {
 		// get info of the cell that triggered the callback
 		var x = cell.getAttribute("cor-x");
 		var y = cell.getAttribute("cor-y");
@@ -68,13 +68,20 @@ function shootShip(cell, playerSide) {
 			// check if all ship has sunk and end game if so
 			if(player.oppShipsAllSunk()) {
 				//alert("Player 1 win! \r\nTook " + p1.getShotAttempted() + " shots.");
+				$(".menupane").addClass("gameover");
+				showAll();
 				var popUp = function () {
 					var scoreTally = generateScoreTally();
-					if (confirm("Player 1 Won!\r\n" + scoreTally + "Restarting game by clicking Ok\r\n")) {
+					var playerText;
+					if(playerSide == "p1-opp-view")
+						playerText = "1";
+					else
+						playerText = "2";
+					if (confirm("Player " + playerText + " Won!\r\n" + scoreTally + "Restarting game by clicking Ok\r\n")) {
 						resetGame();
 					}
 				};
-				popUp();
+				//popUp();
 			}
 		}
 		// else it's missed shot
@@ -223,6 +230,11 @@ function startGame() {
 		//console.log(p1);
 		drawGrid();
 	}
+}
+
+function showAll() {
+	$(".player2side").css("display", "block");
+	$(".player1side").css("display", "block");
 }
 
 function switchSide() {
