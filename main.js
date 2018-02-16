@@ -287,7 +287,7 @@ function generateTable(array, tableTag) {
 		for(var col = 0; col < array[row].length; col++) {
 			var classString = tableTag;
 			// if coordinate is a ship then add class ship for coloring
-			if(array[row][col] == "S") {
+			if(array[row][col] == "S" || array[row][col] == "B" || array[row][col] == "X" || array[row][col] == "H") {
 				classString += " ship";
 			}
 			
@@ -297,7 +297,7 @@ function generateTable(array, tableTag) {
 					classString += " ship hit";
 				}
 				else if(array[row][col] == "B") {
-					classString += " ship sink";
+					classString += " sink";
 				}
 				else if(array[row][col] == "X") {
 					classString += " miss";
