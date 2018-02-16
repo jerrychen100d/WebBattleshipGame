@@ -15,7 +15,6 @@ function showSunkShip(x,y, playerTag) {
 			var xcor = cor.x;
 			var ycor = cor.y;
 			player.updateOppView(xcor,ycor,"B");
-			console.log("view updated!");
 			var tag = "[cor-x=" + xcor + "][cor-y=" + ycor + "]";
 			$(playerTag).find(tag).removeClass("hit");
 			$(playerTag).find(tag).addClass("sink");
@@ -68,8 +67,12 @@ function shootShip(cell, playerSide) {
 			// check if all ship has sunk and end game if so
 			if(player.oppShipsAllSunk()) {
 				//alert("Player 1 win! \r\nTook " + p1.getShotAttempted() + " shots.");
+				// gameover class tag added to prevent undesired behaviors
 				$(".menupane").addClass("gameover");
+				// display both player's grid
 				showAll();
+				// delete everything from sessionStorage when game is over
+				sessionStorage.clear();
 				var popUp = function () {
 					var scoreTally = generateScoreTally();
 					var playerText;
@@ -81,7 +84,7 @@ function shootShip(cell, playerSide) {
 						resetGame();
 					}
 				};
-				//popUp();
+				popUp();
 			}
 		}
 		// else it's missed shot
