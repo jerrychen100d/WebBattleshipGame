@@ -247,6 +247,7 @@ function resetGame() {
 	// the game-start is a tag to signify the start of a game
 	// to restart the game you need to remove the game-start class tag
 	$(".menupane").removeClass("game-start");
+	sessionStorage.clear();
 	location.reload();
 }
 
