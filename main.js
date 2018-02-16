@@ -41,12 +41,15 @@ function shootShip(cell, playerSide) {
 		// create tag for searching customized tag
 		var tag = "[cor-x=" + x + "][cor-y="+y + "]";
 		var pTag = "." + playerSide;
+		var shotTag = "result";
 		var player;
 		if(playerSide == "p1-opp-view") {
 			player = p1
+			shotTag += ".p1shot";
 		}
 		else {
 			player = p2;
+			shotTag += ".p2shot";
 		}
 
 		// if the cell is miss or a hit end callback and 
@@ -60,7 +63,7 @@ function shootShip(cell, playerSide) {
 			player.updateOppView(x,y, "H");
 			player.updateShootCount();
 			$(pTag).find(tag).addClass("hit");
-			alert("hit!");
+			$(shotTag).text("HIT!");
 			// check if ship with coordinate is sunk
 			// if so get the boats coordinates and expose boat by changing class tag from hit to sink
 			showSunkShip(x,y, "." + playerSide);
@@ -92,7 +95,7 @@ function shootShip(cell, playerSide) {
 			player.updateOppView(x,y, "X");
 			player.updateShootCount();
 			$(pTag).find(tag).removeClass("hide");
-			alert("missed!");
+			$(shotTag).text("MISSED!");
 		}
 		
 		// fired class tag to indicate a shot has been fired in this round
@@ -238,6 +241,7 @@ function startGame() {
 function showAll() {
 	$(".player2side").css("display", "block");
 	$(".player1side").css("display", "block");
+	$("result").text("");
 }
 
 function switchSide() {
@@ -253,6 +257,7 @@ function switchSide() {
 		}
 		// once side switched, reset the fired class tag
 		$(".menupane").removeClass("fired")
+		$("result").text("");
 	}
 }
 
