@@ -101,8 +101,10 @@ class Player {
 	}
 	// update this player's shots 
 	updateOppView(x, y, state) {
-		this.shotTook += 1;
 		this.oppView[x][y] = state;
+	}
+	updateShootCount() {
+		this.shotTook += 1;
 	}
 	// store a copy of opponent's ships list
 	updateOppShipList(list) {

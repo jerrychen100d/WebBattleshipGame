@@ -14,7 +14,8 @@ function showSunkShip(x,y, playerTag) {
 			var cor = shipLocation[index];
 			var xcor = cor.x;
 			var ycor = cor.y;
-			
+			player.updateOppView(xcor,ycor,"B");
+			console.log("view updated!");
 			var tag = "[cor-x=" + xcor + "][cor-y=" + ycor + "]";
 			$(playerTag).find(tag).removeClass("hit");
 			$(playerTag).find(tag).addClass("sink");
@@ -58,6 +59,7 @@ function shootShip(cell, playerSide) {
 		if(classList.includes("ship")) {
 			// update opponent's view grid as hit
 			player.updateOppView(x,y, "H");
+			player.updateShootCount();
 			$(pTag).find(tag).addClass("hit");
 			alert("hit!");
 			// check if ship with coordinate is sunk
@@ -78,6 +80,7 @@ function shootShip(cell, playerSide) {
 		// else it's missed shot
 		else {
 			player.updateOppView(x,y, "X");
+			player.updateShootCount();
 			$(pTag).find(tag).removeClass("hide");
 			alert("missed!");
 		}
@@ -271,8 +274,18 @@ function generateTable(array, tableTag) {
 			if(array[row][col] == "S") {
 				classString += " ship";
 			}
+			
 			// if table was opp-view then attach call back when a cell is clicked
 			if(tableTag == "p1-opp-view" || tableTag == "p2-opp-view") {
+				if(array[row][col] == "H") {
+					classString += " ship hit";
+				}
+				else if(array[row][col] == "B") {
+					classString += " ship sink";
+				}
+				else if(array[row][col] == "X") {
+					classString += " miss";
+				}
 				var callBack = 'shootShip(this,"' + tableTag + '")';
 				table += "<td class='" + classString + " hide 'onclick='" + callBack + "' cor-x='" + row +"' cor-y='" + col + "'";
 			}
